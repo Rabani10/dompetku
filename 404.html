@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script>
+  // Redirect ke index.html dengan path yang benar
+  var path = window.location.pathname;
+  // Kalau path tidak diakhiri /, tambahkan dan redirect
+  if (path.slice(-1) !== '/') {
+    window.location.replace(path + '/');
+  } else {
+    window.location.replace('/dompetku/');
+  }
+</script>
+</head>
+<body></body>
+</html>
