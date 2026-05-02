@@ -61,9 +61,24 @@ function loadFromStorage() {
     if (saved) {
       const parsed = JSON.parse(saved);
       state = { ...state, ...parsed };
-      if (!state.categories || !state.categories.income) {
+
+      // ── MIGRATION: format lama (array string) → format baru (array objek)
+      const needsMigration = (arr) => Array.isArray(arr) && arr.length > 0 && typeof arr[0] === 'string';
+
+      if (!state.categories || !state.categories.income || !state.categories.expense) {
         state.categories = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES));
+      } else {
+        if (needsMigration(state.categories.income)) {
+          state.categories.income = state.categories.income.map(name => ({ name, subs: [] }));
+        }
+        if (needsMigration(state.categories.expense)) {
+          state.categories.expense = state.categories.expense.map(name => ({ name, subs: [] }));
+        }
+        // Kalau kosong, pakai default
+        if (state.categories.income.length === 0)  state.categories.income  = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES.income));
+        if (state.categories.expense.length === 0) state.categories.expense = JSON.parse(JSON.stringify(DEFAULT_CATEGORIES.expense));
       }
+      saveToStorage(); // simpan format baru
     }
   } catch(e) { console.warn('Load failed', e); }
 }
